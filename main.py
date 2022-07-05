@@ -6,6 +6,8 @@ DIR = r"E:\RC\16 июня 2016 работа\Data " \
     r"(D)\Mazaeva disk D 2020\Articles 2021август\taylor " \
     r"and francis\revision\Rassvet 2"
 
+DIR = "./"
+
 
 def convert(filexls,
         filecsv = None, 
