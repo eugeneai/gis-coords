@@ -34,3 +34,5 @@ def convert(filexls,
 
 if __name__=="__main__":
     convert("rassv(2008)")
+
+# https://gis.stackexchange.com/questions/178201/calculate-the-distance-between-two-coordinates-wgs84-in-etrs89
