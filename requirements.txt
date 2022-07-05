@@ -1,4 +1,5 @@
 numpy
+xlrd
 pandas
 matplotlib
 pyproj
