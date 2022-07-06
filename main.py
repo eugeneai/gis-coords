@@ -46,7 +46,7 @@ def convert(filexls,
         'd': d,
         'a': a
     })
-    d = DataFrame({'d': d, 'a': a})
+    ind = DataFrame({'d': d, 'a': a})
     g = pyproj.Geod(ellps='WGS84')
     l = len(a)
     print(len(a), len(d), l)
@@ -61,6 +61,7 @@ def convert(filexls,
         'lon': lo,
     })
     print(r)
+    r.to_csv(filecsv)
     return r
 
 

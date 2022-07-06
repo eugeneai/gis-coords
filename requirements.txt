@@ -3,4 +3,5 @@ xlrd
 pandas
 matplotlib
 pyproj
+# -e git+https://github.com/pyproj4/pyproj@3.3.1#egg=pyproj
 geopy
