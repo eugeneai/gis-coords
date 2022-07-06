@@ -15,10 +15,10 @@ DIR = "./"
 
 
 def convert(filexls,
-        filecsv = None, 
-        sheetname="Лист1",
-        azimuthbase = 0,
-        clockwise = True):
+            filecsv=None,
+            sheetname="Лист1",
+            azimuthbase=0,
+            clockwise=True):
 
     if filecsv is None:
         filecsv = filexls
@@ -26,20 +26,19 @@ def convert(filexls,
     filecsv = os.path.join(DIR, filexls)
     filexls = filexls + ".xls"
     filecsv = filecsv + ".csv"
-    coords = read_excel(filexls,
-        sheet_name=sheetname)  
+    coords = read_excel(filexls, sheet_name=sheetname)
     lat = coords.lat[0]
     lon = coords.lon[0]
     print(coords.columns)
-    coords.drop(columns = ['lat', 'lon'])
+    coords.drop(columns=['lat', 'lon'])
     x = coords.x.to_numpy(dtype=float)
     y = coords.y.to_numpy(dtype=float)
     d = numpy.sqrt(x**2 + x**2)
-    a = numpy.arctan(x/y)
+    a = numpy.arctan(x / y)
     a[a == numpy.nan] = 0.0
     a = numpy.degrees(a) + azimuthbase
     if not clockwise:
-        a = - a
+        a = -a
     c = DataFrame({
         'x': coords.x,
         "y": coords.y,
@@ -47,15 +46,12 @@ def convert(filexls,
         'd': d,
         'a': a
     })
-    d = DataFrame({
-        'd': d,
-        'a': a
-    })
-    g=pyproj.Geod(ellps='WGS84')
+    d = DataFrame({'d': d, 'a': a})
+    g = pyproj.Geod(ellps='WGS84')
     l = len(a)
-    print(len(a),len(d),l)
-    _lon = numpy.array([lon]*l)
-    _lat = numpy.array([lat]*l)
+    print(len(a), len(d), l)
+    _lon = numpy.array([lon] * l)
+    _lat = numpy.array([lat] * l)
     _ = [_lon, _lat, a, d]
     print([len(x) for x in _])
     lo, la, ba = g.fwd(*_)
@@ -67,7 +63,8 @@ def convert(filexls,
     print(r)
     return r
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     convert("rassv(2008)")
 
 # https://gis.stackexchange.com/questions/178201/calculate-the-distance-between-two-coordinates-wgs84-in-etrs89
