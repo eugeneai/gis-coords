@@ -33,7 +33,8 @@ def convert(filexls,
     coords.drop(columns=['lat', 'lon'])
     x = coords.x.to_numpy(dtype=float)
     y = coords.y.to_numpy(dtype=float)
-    d = numpy.sqrt(x**2 + x**2)
+    z = coords.z.to_numpy(dtype=float)
+    d = numpy.sqrt(x**2 + y**2)
     a = numpy.arctan(x / y)
     a[a == numpy.nan] = 0.0
     a = numpy.degrees(a) + azimuthbase
