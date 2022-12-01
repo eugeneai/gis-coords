@@ -18,7 +18,8 @@ def convert(filexls,
             filecsv=None,
             sheetname="Лист1",
             azimuthbase=0,
-            clockwise=True):
+            clockwise=True,
+	    basealt=407):
 
     if filecsv is None:
         filecsv = filexls
@@ -60,6 +61,7 @@ def convert(filexls,
         'n': coords.n,
         'lat': la,
         'lon': lo,
+        'z' : coords.z + basealt
     })
     print(r)
     r.to_csv(filecsv)
@@ -68,5 +70,7 @@ def convert(filexls,
 
 if __name__ == "__main__":
     convert("rassv(2008)")
+if __name__ == "__main__":
+    convert("Рассвет(2006)")
 
 # https://gis.stackexchange.com/questions/178201/calculate-the-distance-between-two-coordinates-wgs84-in-etrs89
