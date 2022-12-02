@@ -18,59 +18,76 @@ def convert(filexls,
             filecsv=None,
             sheetname="Лист1",
             azimuthbase=0,
-            clockwise=True,
-	    basealt=407):
+#            clockwise=True,
+            basealt=None):
 
     if filecsv is None:
         filecsv = filexls
-    filexls = os.path.join(DIR, filexls)
-    filecsv = os.path.join(DIR, filexls)
+    # filexls = os.path.join(DIR, filexls)
+    # filecsv = os.path.join(DIR, filecsv)
     filexls = filexls + ".xls"
     filecsv = filecsv + ".csv"
     coords = read_excel(filexls, sheet_name=sheetname)
     lat = coords.lat[0]
     lon = coords.lon[0]
-    print(coords.columns)
+    if basealt is None:
+        basealt = int(coords.basealt[0])
+    print("Found the following columns:")
+    print(list(coords.columns))
     coords.drop(columns=['lat', 'lon'])
     x = coords.x.to_numpy(dtype=float)
     y = coords.y.to_numpy(dtype=float)
     z = coords.z.to_numpy(dtype=float)
     d = numpy.sqrt(x**2 + y**2)
-    a = numpy.arctan(x / y)
-    a[a == numpy.nan] = 0.0
-    a = numpy.degrees(a) + azimuthbase
-    if not clockwise:
-        a = -a
+    # a = numpy.arctan(x / y)
+    l = len(d)
+    ay = numpy.array([0.0]*l)
+    ax = numpy.array([math.pi/2]*l)
+    ax = numpy.degrees(ax) + azimuthbase
+    ay = numpy.degrees(ay) + azimuthbase
+    # if clockwise:
+    #     ax = -ax
+    #     ay = -ay
     c = DataFrame({
         'x': coords.x,
         "y": coords.y,
         "z": coords.z,
         'd': d,
-        'a': a
+        'ax': ax,
+        'ay': ay
     })
-    ind = DataFrame({'d': d, 'a': a})
+    # ind = DataFrame({'d': d, 'a': a})
     g = pyproj.Geod(ellps='WGS84')
-    l = len(a)
-    print(len(a), len(d), l)
+    # print(len(ax), len(d), l)
     _lon = numpy.array([lon] * l)
     _lat = numpy.array([lat] * l)
-    _ = [_lon, _lat, a, d]
-    print([len(x) for x in _])
-    lo, la, ba = g.fwd(*_)
+    _x = [_lon, _lat, ax, x]
+    # print([len(x) for x in _])
+    lox, lax, bax = g.fwd(*_x)
+    _y = [lox, lax, ay, y]
+    lo, la, ba = g.fwd(*_y)
     r = DataFrame({
         'n': coords.n,
         'lat': la,
         'lon': lo,
         'z' : coords.z + basealt
     })
-    print(r)
+    # print(r)
     r.to_csv(filecsv)
     return r
 
 
 if __name__ == "__main__":
-    convert("rassv(2008)")
-if __name__ == "__main__":
-    convert("Рассвет(2006)")
+    import sys
+    import os.path
+    if len(sys.argv)>1:
+        fn = sys.argv[1] # File name of an Excel file at the first parameter
+        root, ext = os.path.splitext(fn)
+        if ext != ".xls":
+            print("Error: the tool processes only XLS-files to CSV")
+            quit()
+        convert(root)
+    else:
+        convert("rassv(2008)")
 
 # https://gis.stackexchange.com/questions/178201/calculate-the-distance-between-two-coordinates-wgs84-in-etrs89
